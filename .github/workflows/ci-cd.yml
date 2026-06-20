@@ -70,7 +70,7 @@ deploy_homolog:
           script: |
             cd /opt/receitas
             sudo docker compose up -d --build homolog
-
+            
   deploy_prod:
     name: Deploy produção
     runs-on: ubuntu-latest
