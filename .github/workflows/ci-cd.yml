@@ -53,15 +53,15 @@ jobs:
             exit 1
           fi
 
-  deploy_homolog:
-    name: Deploy homologação
+deploy_prod:
+    name: Deploy produção
     runs-on: ubuntu-latest
-    needs: tests
+    needs: deploy_homolog
     environment:
-      name: homologacao
+      name: producao
 
     steps:
-      - name: Deploy homologação
+      - name: Deploy produção
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VM_HOST }}
@@ -69,7 +69,7 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             cd /opt/receitas
-            sudo docker compose up -d --build app_homolog
+            sudo docker compose up -d --build prod
 
   deploy_prod:
     name: Deploy produção
