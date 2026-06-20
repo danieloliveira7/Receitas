@@ -34,5 +34,5 @@ class AuthController extends Controller
         $request->session()->forget('usuario');
         return redirect()->route('login')->with('sucesso', 'Você saiu com sucesso.');
     }
-    //teste123
+
 }
