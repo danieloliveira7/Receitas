@@ -63,10 +63,13 @@ jobs:
     steps:
       - name: Deploy homologação
         uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        port: 22
+        timeout: 120s
+        command_timeout: 20m
+        debug: true
           script: |
             cd /opt/receitas
             sudo docker compose up -d --build app_homolog
