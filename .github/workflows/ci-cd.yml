@@ -63,6 +63,71 @@ jobs:
     steps:
       - name: Deploy homologação
         uses: appleboy/ssh-action@v1.2.0
+name: CI/CD Receitas
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  tests:
+    name: Testes automatizados
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, pdo_sqlite, sqlite
+          tools: composer
+
+      - name: Instalar dependências
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Preparar ambiente
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+
+      - name: Executar testes
+        run: php artisan test --log-junit junit.xml
+
+      - name: Estatísticas dos testes
+        if: always()
+        run: |
+          TOTAL=$(grep -o 'tests="[0-9]*"' junit.xml | head -1 | grep -o '[0-9]*')
+          FALHAS=$(grep -o 'failures="[0-9]*"' junit.xml | head -1 | grep -o '[0-9]*')
+          ERROS=$(grep -o 'errors="[0-9]*"' junit.xml | head -1 | grep -o '[0-9]*')
+          IGNORADOS=$(grep -o 'skipped="[0-9]*"' junit.xml | head -1 | grep -o '[0-9]*')
+          PASSOU=$((TOTAL - FALHAS - ERROS - IGNORADOS))
+
+          echo "## Estatísticas dos Testes" >> $GITHUB_STEP_SUMMARY
+          echo "| Métrica | Quantidade |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---:|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Aprovados | $PASSOU |" >> $GITHUB_STEP_SUMMARY
+          echo "| Falhas | $FALHAS |" >> $GITHUB_STEP_SUMMARY
+          echo "| Erros | $ERROS |" >> $GITHUB_STEP_SUMMARY
+          echo "| Ignorados | $IGNORADOS |" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$TOTAL" -lt 20 ]; then
+            exit 1
+          fi
+
+  deploy_homolog:
+    name: Deploy homologação
+    runs-on: ubuntu-latest
+    needs: tests
+    environment:
+      name: homologacao
+
+    steps:
+      - name: Deploy homologação
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
@@ -70,6 +135,24 @@ jobs:
           script: |
             cd /opt/receitas
             sudo docker compose up -d --build app_homolog
+
+  deploy_prod:
+    name: Deploy produção
+    runs-on: ubuntu-latest
+    needs: deploy_homolog
+    environment:
+      name: producao
+
+    steps:
+      - name: Deploy produção
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /opt/receitas
+            sudo docker compose up -d --build app_prodg
 
   deploy_prod:
     name: Deploy produção
