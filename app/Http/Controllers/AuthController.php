@@ -34,5 +34,9 @@ class AuthController extends Controller
         $request->session()->forget('usuario');
         return redirect()->route('login')->with('sucesso', 'Você saiu com sucesso.');
     }
-
+public function testeSonar()
+{
+    $senha = "123456";
+    return $senha;
+}
 }
