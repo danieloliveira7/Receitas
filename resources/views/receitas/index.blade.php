@@ -55,7 +55,7 @@
             <thead>
                 <tr style="background:#f0f0f0;">
                     <th style="padding:10px 12px; text-align:left; border-bottom:2px solid #ddd;">#</th>
-                    <th style="padding:10px 12px; text-align:left; border-bottom:2px solid #ddd;">Nome</th>
+                    <th style="padding:10px 12px; text-align:left; border-bottom:2px solid #ddd;">Nomessss</th>
                     <th style="padding:10px 12px; text-align:left; border-bottom:2px solid #ddd;">Tipo</th>
                     <th style="padding:10px 12px; text-align:left; border-bottom:2px solid #ddd;">Custo</th>
                     <th style="padding:10px 12px; text-align:left; border-bottom:2px solid #ddd;">Data Registro</th>
