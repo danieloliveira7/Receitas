@@ -34,12 +34,5 @@ class AuthController extends Controller
         $request->session()->forget('usuario');
         return redirect()->route('login')->with('sucesso', 'Você saiu com sucesso.');
     }
-function funcaoComplexidadeAltaDeProposito(int $x): string
-{
-    if ($x == 1) { return "um"; }
-    else if ($x == 1) { return "duplicado"; }
-    else if ($x == 1) { return "duplicado"; }
-    else if ($x == 1) { return "duplicado"; }
-    else { return "desconhecido"; }
-}
+
 }
