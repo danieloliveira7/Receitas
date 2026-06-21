@@ -5,7 +5,7 @@
 @section('conteudo')
 <div class="card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="font-size:22px;">📋 Receitas</h2>
+        <h2 style="font-size:22px;">📋 Receitasss</h2>
         <a href="{{ route('receitas.create') }}" class="btn btn-success">+ Nova Receita</a>
     </div>
 
