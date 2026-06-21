@@ -17,6 +17,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, pdo, pdo_sqlite, sqlite
+          coverage: xdebug
           tools: composer
 
       - name: Instalar dependências
@@ -28,8 +29,8 @@ jobs:
           php artisan key:generate
           touch database/database.sqlite
 
-      - name: Executar testes
-        run: php artisan test --log-junit junit.xml
+      - name: Executar testes com cobertura
+        run: php artisan test --log-junit junit.xml --coverage-clover coverage.xml
 
       - name: Estatísticas dos testes
         if: always()
@@ -53,11 +54,13 @@ jobs:
             exit 1
           fi
 
-      - name: Upload relatório de testes
+      - name: Upload relatórios de testes e cobertura
         uses: actions/upload-artifact@v4
         with:
-          name: junit-report
-          path: junit.xml
+          name: test-and-coverage-reports
+          path: |
+            junit.xml
+            coverage.xml
 
   sonar:
     name: Análise SonarCloud
@@ -69,10 +72,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Baixar relatório de testes
+      - name: Baixar relatórios de testes e cobertura
         uses: actions/download-artifact@v4
         with:
-          name: junit-report
+          name: test-and-coverage-reports
 
       - name: Executar análise SonarCloud
         uses: SonarSource/sonarqube-scan-action@v7
@@ -107,4 +110,4 @@ jobs:
           cd /opt/receitas/app-prod
           git pull origin main
           cd /opt/receitas
-            sudo docker compose restart prod
+          sudo docker compose restart prod
