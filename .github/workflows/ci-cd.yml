@@ -58,29 +58,25 @@ jobs:
     runs-on: self-hosted
     needs: tests
     environment:
-      name: homologacao
-
+    name: homologacao
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Deploy homologação
+      - name: Atualizar código e reiniciar container (homologação)
         run: |
+          cd /opt/receitas/app-homolog
+          git pull origin main
           cd /opt/receitas
-          sudo docker compose up -d --build homolog
+          sudo docker compose restart homolog
 
   deploy_prod:
     name: Deploy produção
     runs-on: self-hosted
     needs: deploy_homolog
     environment:
-      name: producao
-
+    name: producao
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Deploy produção
+      - name: Atualizar código e reiniciar container (produção)
         run: |
+          cd /opt/receitas/app-prod
+          git pull origin main
           cd /opt/receitas
-          sudo docker compose up -d --build prod
+          sudo docker compose restart prod
