@@ -53,15 +53,41 @@ jobs:
             exit 1
           fi
 
+      - name: Upload relatório de testes
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-report
+          path: junit.xml
+
+  sonar:
+    name: Análise SonarCloud
+    runs-on: ubuntu-latest
+    needs: tests
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Baixar relatório de testes
+        uses: actions/download-artifact@v4
+        with:
+          name: junit-report
+
+      - name: Executar análise SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   deploy_homolog:
     name: Deploy homologação
     runs-on: self-hosted
-    needs: tests
+    needs: sonar
     environment:
       name: homologacao
 
     steps:
-      - name: Atualizar código e reiniciar container (homologação)
+      - name: Atualizar código e reiniciar container homologação
         run: |
           cd /opt/receitas/app-homolog
           git pull origin main
@@ -76,9 +102,9 @@ jobs:
       name: producao
 
     steps:
-      - name: Atualizar código e reiniciar container (produção)
+      - name: Atualizar código e reiniciar container produção
         run: |
           cd /opt/receitas/app-prod
           git pull origin main
           cd /opt/receitas
-          sudo docker compose restart prod
+            sudo docker compose restart prod
