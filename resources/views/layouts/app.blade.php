@@ -33,6 +33,18 @@
         .btn-danger  { background: #e74c3c; color: #fff; }
         .btn-secondary { background: #95a5a6; color: #fff; }
         .btn-sm { padding: 4px 12px; font-size: 12px; }
+
+        /* Paginação do Laravel (Tailwind) */
+        nav[role="navigation"] { margin-top: 16px; }
+        nav[role="navigation"] svg { width: 18px; height: 18px; vertical-align: middle; }
+        nav[role="navigation"] a, nav[role="navigation"] span {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 6px 12px; margin: 0 2px; border: 1px solid #ddd; border-radius: 5px;
+            color: #2980b9; text-decoration: none; font-size: 13px; min-width: 32px;
+        }
+        nav[role="navigation"] span[aria-current="page"] span {
+            background: #2980b9; color: #fff; border-color: #2980b9; border: none; padding: 0;
+        }
     </style>
 </head>
 <body>
